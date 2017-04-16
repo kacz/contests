@@ -1,0 +1,78 @@
+package cz.kacz.fbhack.mmxv.r1;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.*;
+
+/**
+ * Created by Krisztian on 1/12/2015.
+ * https://www.facebook.com/hackercup/problems.php?pid=313229895540583&round=344496159068801
+ */
+public class ProblemThree {
+    static Scanner in;
+    static FileWriter out;
+
+    private static final int SIZE = 1998;
+    private static List<BigInteger[]> table;
+
+    public static void main(String[] args) throws IOException {
+        in = new Scanner(new File("winning_at_sports.txt"));
+        out = new FileWriter("out.txt");
+
+        prepareTable();
+        int t = in.nextInt();
+        in.nextLine();
+        for(int i = 1; i <= t; ++i){
+            int result = compute(i);
+//            out.write("Case #" + i + ": " + result  + "\n");
+        }
+
+        in.close();
+        out.close();
+    }
+
+    private static void prepareTable() {
+
+        table = new ArrayList<>();
+        BigInteger[] last = new BigInteger[2];
+        last[0] = BigInteger.ONE;
+        last[1] = BigInteger.ONE;
+        table.add(last);
+
+        for(int i = 1; i <= SIZE; ++i) {
+            BigInteger[] current = new BigInteger[i+2];
+            current[0] = BigInteger.ONE;
+            for(int j = 1; j < i+1; ++j) {
+//                System.out.println("j: " + j);
+                current[j] = current[j-1].add(last[j]);
+            }
+            current[i+1] = current[i];
+
+            table.add(current);
+            last = current;
+//            System.out.println(i);
+        }
+
+    }
+
+    private static int compute(int t) throws IOException {
+
+        String status = in.nextLine();
+        String[] points = status.split("-");
+
+        int my = Integer.parseInt(points[0]);
+        int opp = Integer.parseInt(points[1]);
+
+        BigInteger stressFree = BigInteger.ONE;
+        BigInteger stressFul = BigInteger.ONE;
+        if(opp > 0) {
+            stressFree = table.get(my-2)[opp].mod(new BigInteger("1000000007"));
+            stressFul = table.get(opp-1)[opp-1].mod(new BigInteger("1000000007"));
+        }
+
+        out.write("Case #" + t + ": " + stressFree + " " + stressFul  + "\n");
+        return 0;
+    }
+}

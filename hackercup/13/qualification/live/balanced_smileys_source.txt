@@ -1,0 +1,72 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.Arrays;
+import java.util.Scanner;
+
+
+public class Main {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		if(args.length > 0) {
+			try {
+				System.setIn(new FileInputStream("/home/kacz/hack/input"));
+				System.setOut(new PrintStream(new FileOutputStream("/home/kacz/hack/output")));
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		Scanner in = new Scanner(System.in);
+		int t = in.nextInt();
+		in.nextLine();
+		for (int c = 1; c <= t; c++) {
+			solve(in,System.out,c);
+			
+		}
+
+	}
+
+	public static void solve(Scanner in, PrintStream out,int iteration) {
+		String line = in.nextLine();
+		
+		int lower = 0;
+		int higher = 0;
+		
+		for(int j=0;j<line.length();++j) {
+			if(line.charAt(j) == '(') {
+				higher += 1;
+				if(!isSmiley(line,j)) {
+					lower += 1;
+				}
+			}
+			if(line.charAt(j) == ')') {
+				if(!isSmiley(line,j)) {
+					higher -= 1;
+					if(higher < 0) {
+						break;
+					}
+				}
+				lower -= 1;
+			}
+		}
+		
+		if(higher < 0 || lower >0) System.out.printf("Case #%d: %s%n", iteration, "NO");
+		else System.out.printf("Case #%d: %s%n", iteration, "YES");
+		
+	}
+	
+	static boolean isSmiley(String line, int j) {
+		if(j==0) {
+			return false;
+		}
+		if(line.charAt(j-1) == ':') {
+			return true;
+		}
+		return false;
+	}
+}

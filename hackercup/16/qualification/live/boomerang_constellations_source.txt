@@ -1,0 +1,62 @@
+package kacz;
+
+import java.util.*;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner in = new Scanner(System.in);
+        int dayz = in.nextInt();
+        for(int i = 0; i < dayz; ++i) {
+            solve(i+1, in);
+        }
+    }
+
+    static class Star {
+        public Star(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        int x;
+        int y;
+    }
+
+    private static void solve(int day, Scanner in) {
+
+        int solution = 0;
+
+        int starCount = in.nextInt();
+
+        List<Star> stars = new ArrayList<>();
+
+        for(int i = 0; i < starCount; ++i) {
+            int x = in.nextInt();
+            int y = in.nextInt();
+            stars.add(new Star(x,y));
+        }
+
+        for(Star s: stars) {
+            Map<Integer,Integer> distances = new HashMap<>();
+            for(Star t: stars) {
+                int d = distance(s,t);
+                Integer cd = distances.get(d);
+                if(cd==null) {
+                    cd = 0;
+                }
+                distances.put(d, cd+1);
+            }
+
+            for(Map.Entry<Integer,Integer> e:distances.entrySet()) {
+                solution += e.getValue() * (e.getValue()-1) / 2;
+            }
+        }
+
+        System.out.println("Case #" + day + ": " + solution);
+    }
+
+    private static int distance(Star s, Star t) {
+        return (s.x-t.x)*(s.x-t.x) + (s.y-t.y)*(s.y-t.y);
+    }
+}

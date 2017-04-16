@@ -1,0 +1,98 @@
+package com.company;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+
+public class Main {
+
+    static Scanner in;
+    static FileWriter out;
+
+    public static void main(String[] args) throws IOException {
+        in = new Scanner(new File("new_years_resolution.txt"));
+        out = new FileWriter("out.txt");
+
+        int t = in.nextInt();
+//        out.write("t:" + t + "\n");
+        for(int i = 1; i <= t; ++i){
+            boolean result = compute();
+            out.write("Case #" + i + ": " + (result ? "yes" : "no") + "\n");
+        }
+
+        in.close();
+        out.close();
+    }
+
+    private static boolean compute() throws IOException {
+
+        int wannaP, wannaC, wannaF;
+        wannaP = in.nextInt();
+        wannaC = in.nextInt();
+        wannaF = in.nextInt();
+
+        Cucc wanna = new Cucc(wannaP,wannaC,wannaF);
+
+        int n = in.nextInt();
+
+        List<Cucc> cuccok = new ArrayList<>(n);
+
+        for(int i=0;i<n;++i) {
+            int p = in.nextInt();
+            int c = in.nextInt();
+            int f = in.nextInt();
+            cuccok.add(new Cucc(p,c,f));
+        }
+
+        boolean success = false;
+        Cucc sumCucc = new Cucc(0,0,0);
+
+        success = proba(sumCucc, wanna, cuccok,0);
+
+        return success;
+    }
+
+    private static boolean proba(Cucc sumCucc, Cucc wanna, List<Cucc> cuccok, int i) {
+
+        if(sumCucc.p == wanna.p && sumCucc.c == wanna.c && sumCucc.f == wanna.f) {
+            return true;
+        }
+
+        if(i == cuccok.size()) {
+            return false;
+        }
+
+        if(sumCucc.p > wanna.p || sumCucc.c > wanna.c || sumCucc.f > wanna.f) {
+            return false;
+        }
+
+        sumCucc.p += cuccok.get(i).p;
+        sumCucc.c += cuccok.get(i).c;
+        sumCucc.f += cuccok.get(i).f;
+
+        if(proba(sumCucc,wanna,cuccok,i+1)) {
+            return true;
+        }
+
+        sumCucc.p -= cuccok.get(i).p;
+        sumCucc.c -= cuccok.get(i).c;
+        sumCucc.f -= cuccok.get(i).f;
+
+        return proba(sumCucc,wanna,cuccok,i+1);
+    }
+
+
+    static class Cucc {
+        int p;
+        int c;
+        int f;
+
+        Cucc(int p, int c, int f) {
+            this.p = p;
+            this.c = c;
+            this.f = f;
+        }
+    }
+}

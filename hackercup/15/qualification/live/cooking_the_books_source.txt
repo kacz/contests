@@ -1,0 +1,59 @@
+package com.company;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+
+public class Main {
+
+    static Scanner in;
+    static FileWriter out;
+
+    public static void main(String[] args) throws IOException {
+        in = new Scanner(new File("cooking_the_books.txt"));
+        out = new FileWriter("out.txt");
+
+        int t = in.nextInt();
+//        out.write("t:" + t + "\n");
+        for(int i = 0; i < t; ++i){
+            int n = in.nextInt();
+            compute(i+1,n);
+        }
+
+        in.close();
+        out.close();
+    }
+
+    private static void compute(int i, int n) throws IOException {
+        int length = (int) Math.floor(Math.log10(n)) + 1 ;
+
+        List<Integer> perms = new ArrayList<Integer>();
+        perms.add(n);
+
+        for(int first = 1; first <= length; ++first) {
+            for (int second = first+1; second <= length; ++second) {
+                int num = change (n,first, second);
+                perms.add(num);
+            }
+        }
+        perms.sort(Comparator.<Integer>naturalOrder());
+        int index = 0;
+        while ((int) Math.floor(Math.log10(perms.get(index))) + 1 < length) {
+            index++;
+        }
+        int min = perms.get(index);
+        int max = perms.get(perms.size()-1);
+        out.write("Case #" + i + ": " + min + " " + max + "\n");
+    }
+
+    private static int change(int n, int first, int second) {
+        int length = (int) Math.floor(Math.log10(n)) + 1 ;
+
+        int atFirst = n / ((int)Math.pow(10,length-first)) % 10;
+        int atSecond = n / ((int)Math.pow(10,length-second)) % 10;
+
+        return n + (atSecond - atFirst) * (int)Math.pow(10,length - first) + (atFirst - atSecond) * (int)Math.pow(10,length - second);
+    }
+}
